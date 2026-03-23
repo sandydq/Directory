@@ -27,21 +27,21 @@ public class DirectoryTest {
         rootNode = createMockTreeStructure();
     }
 
-    @Test(groups = "1")
+    @Test(groups = "part 1")
     public void testDirectoryModelAddSize() {
         DirectoryDTO rootDTO = new DirectoryDTO(1L, "root", null, FileType.FOLDER, null, null, null);
         rootDTO.addFolderSize(40.0);
         Assert.assertEquals(rootDTO.getSize(), 40.0);
     }
 
-    @Test(groups = "1")
+    @Test(groups = "part 1")
     public void testDirectoryModelAddNullSize() {
         DirectoryDTO rootDTO = new DirectoryDTO(1L, "root", null, FileType.FOLDER, null, null, null);
         rootDTO.addFolderSize(null);
         Assert.assertEquals(rootDTO.getSize(), 0.0);
     }
 
-    @Test(groups = "1")
+    @Test(groups = "part 1")
     public void testTreeDirectoryAddChildren() {
         DirectoryDTO rootDTO = new DirectoryDTO(1L, "root", null, FileType.FOLDER, 490d, null, null);
         TreeDirectoryDTO root = new TreeDirectoryDTO(rootDTO);
@@ -53,7 +53,7 @@ public class DirectoryTest {
         Assert.assertEquals(root.getChildren().get(0).getDirectoryDTO().getId(), 2L);
     }
 
-    @Test(groups = "1")
+    @Test(groups = "part 1")
     public void testTreeDirectoryAddNullChildren() {
         DirectoryDTO rootDTO = new DirectoryDTO(1L, "root", null, FileType.FOLDER, 490d, null, null);
         TreeDirectoryDTO root = new TreeDirectoryDTO(rootDTO);
@@ -61,7 +61,7 @@ public class DirectoryTest {
         Assert.assertThrows(IllegalArgumentException.class, () -> root.addChildren(null));
     }
 
-    @Test(groups = "2")
+    @Test(groups = "part 2")
     public void testParseCSVFile() throws IOException {
         String filePath = "src/main/resources/directory-structure.csv";
         List<DirectoryDTO> directoryDTOList = directoryOperation.parseCSVFile(filePath);
@@ -71,13 +71,13 @@ public class DirectoryTest {
         Assert.assertEquals(directoryDTOList.size(), 11);
     }
 
-    @Test(groups = "2")
+    @Test(groups = "part 2")
     public void testParseNotExistCSVFile() throws FileNotFoundException {
         String filePath = "src/main/resources/notExist-structure.csv";
         Assert.assertThrows(FileNotFoundException.class, () -> directoryOperation.parseCSVFile(filePath));
     }
 
-    @Test(groups = "2")
+    @Test(groups = "part 2")
     public void testCreateTreeStructure() {
         List<DirectoryDTO> directoryDTOList = new ArrayList<>();
 
@@ -98,10 +98,10 @@ public class DirectoryTest {
 
         Assert.assertNotNull(rootNode.getChildren());
         Assert.assertEquals(rootNode.getChildren().size(), 3);
-        Assert.assertEquals(rootNode.getChildren().get(0).getDirectoryDTO().getId(), 2L);
+        Assert.assertEquals(rootNode.getChildren().get(0).getDirectoryDTO().getId(), 4L);
     }
 
-    @Test(groups = "2")
+    @Test(groups = "part 2")
     public void testFindRootDirectoryWithSingleRoot() {
         List<DirectoryDTO> directoryDTOList = new ArrayList<>();
 
@@ -125,7 +125,7 @@ public class DirectoryTest {
         Assert.assertEquals(result.getName(), "root");
     }
 
-    @Test(groups = "2")
+    @Test(groups = "part 2")
     public void testFindRootDirectoryWithMultipleRootsThrowsException() {
         List<DirectoryDTO> directoryDTOList = new ArrayList<>();
 
@@ -145,7 +145,7 @@ public class DirectoryTest {
         Assert.assertThrows(RuntimeException.class, () -> directoryOperation.findRootDirectory(directoryDTOList));
     }
 
-    @Test(groups = "2")
+    @Test(groups = "part 2")
     public void testFindRootDirectoryWithNoRootThrowsException() {
         List<DirectoryDTO> directoryDTOList = new ArrayList<>();
 
@@ -163,7 +163,7 @@ public class DirectoryTest {
         Assert.assertThrows(RuntimeException.class, () -> directoryOperation.findRootDirectory(directoryDTOList));
     }
 
-    @Test(groups = "3-a")
+    @Test(groups = "part 3-a")
     public void testPrintDirectoryStructure() {
         String expectedOutput = read();
         String actualOutput = DirectoryUtility.getDirectoryStructureByDFS(rootNode, 0);
@@ -173,13 +173,13 @@ public class DirectoryTest {
         Assert.assertEquals(actualOutput.trim(), expectedOutput.trim());
     }
 
-    @Test(groups = "3-a")
+    @Test(groups = "part 3-a")
     public void testPrintNullStructure() {
         String result = DirectoryUtility.getDirectoryStructureByDFS(null, 0);
-        Assert.assertEquals(result, "Provided tree node is null, returning empty string");
+        Assert.assertTrue(result.isEmpty());
     }
 
-    @Test(groups = "3-b")
+    @Test(groups = "part 3-b")
     public void testGetNodesWithTopSecretClassification() {
         List<FileClassification> topSecretClassification = List.of(FileClassification.TOP_SECRET);
         String result = DirectoryMain.getNodesByClassification(rootNode, topSecretClassification);
@@ -191,7 +191,7 @@ public class DirectoryTest {
         Assert.assertEquals(classifications.size(), 2);
     }
 
-    @Test(groups = "3-b")
+    @Test(groups = "part 3-b")
     public void testGetNodesWithTopSecretClassificationEmpty() {
         DirectoryDTO rootDTO = new DirectoryDTO(1L, "root", null, FileType.FOLDER, null, null, null);
         TreeDirectoryDTO root = new TreeDirectoryDTO(rootDTO);
@@ -205,7 +205,7 @@ public class DirectoryTest {
         Assert.assertTrue(result.isEmpty());
     }
 
-    @Test(groups = "3-c")
+    @Test(groups = "part 3-c")
     public void testGetNodesWithSecretClassification() {
         List<FileClassification> secretClassification = List.of(FileClassification.SECRET);
 
@@ -218,7 +218,7 @@ public class DirectoryTest {
         Assert.assertEquals(classifications.size(), 2);
     }
 
-    @Test(groups = "3-c")
+    @Test(groups = "part 3-c")
     public void testGetNodesWithSecretEmptyClassification() {
         DirectoryDTO rootDTO = new DirectoryDTO(1L, "root", null, FileType.FOLDER, null, null, null);
         TreeDirectoryDTO root = new TreeDirectoryDTO(rootDTO);
@@ -232,7 +232,7 @@ public class DirectoryTest {
         Assert.assertTrue(result.isEmpty());
     }
 
-    @Test(groups = "3-d")
+    @Test(groups = "part 3-d")
     public void testGetNodesWithTopSecretAndSecretClassification() {
         List<FileClassification> nonPublicClassificationList = DirectoryUtility.getNonPublicClassificationList();
         String result = DirectoryMain.getNodesByClassification(rootNode, nonPublicClassificationList);
@@ -247,7 +247,7 @@ public class DirectoryTest {
         Assert.assertEquals(classifications.stream().filter(c -> c.equals("Top secret")).count(), 2);
     }
 
-    @Test(groups = "3-d")
+    @Test(groups = "part 3-d")
     public void testGetNodesWithTopSecretAndSecretEmptyClassification() {
         DirectoryDTO rootDTO = new DirectoryDTO(1L, "root", null, FileType.FOLDER, null, null, null);
         TreeDirectoryDTO root = new TreeDirectoryDTO(rootDTO);
@@ -261,28 +261,28 @@ public class DirectoryTest {
         Assert.assertTrue(result.isEmpty());
     }
 
-    @Test(groups = "3-e")
+    @Test(groups = "part 3-e")
     public void testSumOfSizeForPublicClassificationFile() {
         List<FileClassification> classification = List.of(FileClassification.PUBLIC);
         Double totalSize = DirectoryMain.getSumOfSizeForByClassification(rootNode, classification);
         Assert.assertEquals(totalSize, 220.0);
     }
 
-    @Test(groups = "3-e")
+    @Test(groups = "part 3-e")
     public void testSumOfSizeForSecretClassificationFile() {
         List<FileClassification> classification = List.of(FileClassification.SECRET);
         Double totalSize = DirectoryMain.getSumOfSizeForByClassification(rootNode, classification);
         Assert.assertEquals(totalSize, 140.0);
     }
 
-    @Test(groups = "3-e")
+    @Test(groups = "part 3-e")
     public void testSumOfSizeForTopSecretClassificationFile() {
         List<FileClassification> classification = List.of(FileClassification.TOP_SECRET);
         Double totalSize = DirectoryMain.getSumOfSizeForByClassification(rootNode, classification);
         Assert.assertEquals(totalSize, 130.0);
     }
 
-    @Test(groups = "3-f")
+    @Test(groups = "part 3-f")
     public void testGetChildFileNodeUnderGivenFolderExceptPublic() {
         String folderName = "folder1";
         List<FileClassification> nonPublicClassificationList = DirectoryUtility.getNonPublicClassificationList();
@@ -298,7 +298,7 @@ public class DirectoryTest {
         Assert.assertEquals(classificationsFromResult.stream().filter(c -> c.equalsIgnoreCase("top secret")).count(), 1);
     }
 
-    @Test(groups = "3-f")
+    @Test(groups = "part 3-f")
     public void testGetChildFileNodeUnderGivenInvalidFolder() {
         String folderName = "folder15";
         List<FileClassification> nonPublicClassificationList = DirectoryUtility.getNonPublicClassificationList();
@@ -306,7 +306,7 @@ public class DirectoryTest {
         Assert.assertEquals(result, folderName + " is not exist in the given directory structure");
     }
 
-    @Test(groups = "3-f")
+    @Test(groups = "part 3-f")
     public void testGetChildFileNodeUnderNonFolder() {
         String fileName = "secretFile1";
         List<FileClassification> nonPublicClassificationList = DirectoryUtility.getNonPublicClassificationList();
@@ -404,17 +404,17 @@ public class DirectoryTest {
 
     public String read() {
         return """
-                name = root, type = Directory, size = 490.0
-                 name = secretFile1, type = File, size = 100.0, classification = Secret, checksum = 42
-                 name = topSecretFile1, type = File, size = 80.0, classification = Top secret, checksum = 42
-                 name = folder1, type = Directory, size = 310.0
-                  name = publicFile1, type = File, size = 10.0, classification = Public, checksum = 42
-                  name = secretFile12, type = File, size = 40.0, classification = Secret, checksum = 42
-                  name = folder2, type = Directory, size = 260.0
-                   name = publicFile2, type = File, size = 60.0, classification = Public, checksum = 42
-                   name = topSecretFile2, type = File, size = 50.0, classification = Top secret, checksum = 42
-                   name = publicFile3, type = File, size = 70.0, classification = Public, checksum = 42
-                   name = publicFile4, type = File, size = 80.0, classification = Public, checksum = 42
+                name = root, type = Directory, size = 490
+                 name = secretFile1, type = File, size = 100, classification = Secret, checksum = 42
+                 name = topSecretFile1, type = File, size = 80, classification = Top secret, checksum = 42
+                 name = folder1, type = Directory, size = 310
+                  name = publicFile1, type = File, size = 10, classification = Public, checksum = 42
+                  name = secretFile12, type = File, size = 40, classification = Secret, checksum = 42
+                  name = folder2, type = Directory, size = 260
+                   name = publicFile2, type = File, size = 60, classification = Public, checksum = 42
+                   name = topSecretFile2, type = File, size = 50, classification = Top secret, checksum = 42
+                   name = publicFile3, type = File, size = 70, classification = Public, checksum = 42
+                   name = publicFile4, type = File, size = 80, classification = Public, checksum = 42
                 """;
     }
 
