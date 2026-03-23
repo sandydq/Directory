@@ -75,7 +75,7 @@ public class DirectoryUtility {
      * matches the provided list. If classification is null, all nodes are returned.
      *
      * @param node           the root node to traverse
-     * @param classification the allowed classifications to filter by, or null for all
+     * @param classifications the allowed classifications to filter by, or null for all
      * @return a list of matching directory entries
      */
     public static List<DirectoryDTO> getNodesBasedOnGivenClassificationByDFS(TreeDirectoryDTO node, List<FileClassification> classifications) {

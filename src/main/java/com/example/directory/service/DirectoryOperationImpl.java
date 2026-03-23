@@ -63,7 +63,6 @@ public class DirectoryOperationImpl implements DirectoryOperationInterface {
      */
     @Override
     public DirectoryDTO findRootDirectory(List<DirectoryDTO> directoryDTOList) {
-
         List<DirectoryDTO> rootDirectory = directoryDTOList
                 .stream()
                 .filter(dir -> dir.getParentId() == null)

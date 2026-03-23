@@ -27,6 +27,7 @@ public class DirectoryMain {
         String filePathFromArg = DirectoryUtility.getArgValueByKey(args, ARG_FILE_PATH_KEY);
         String filepath = filePathFromArg != null && !filePathFromArg.isBlank() ? filePathFromArg : CSV_DEFAULT_FILE_PATH;
         DirectoryOperationInterface directoryOperation = new DirectoryOperationImpl();
+
         try {
             DirectoryUtility.printSeparator("1) Create domain model to represent the state of the directory structure " + "\n"
                     + "2) Create a parser that reads the csv file (directory-structure.csv) and populates the model");
@@ -71,6 +72,14 @@ public class DirectoryMain {
         }
     }
 
+    /**
+     * Retrieves file nodes filtered by the given classification(s) and returns them as a formatted string.
+     * The nodes are sorted by ID and joined with newline separators.
+     *
+     * @param rootNode       the root node of the directory tree structure
+     * @param classification a list of FileClassification values to filter
+     * @return a string representation of nodes matching the given classification(s), sorted by ID and separated by newlines
+     */
     public static String getNodesByClassification(TreeDirectoryDTO rootNode, List<FileClassification> classification) {
         String nodesByGivenClassification;
         nodesByGivenClassification = DirectoryUtility.getNodesBasedOnGivenClassificationByDFS(rootNode, classification)
@@ -81,6 +90,13 @@ public class DirectoryMain {
         return nodesByGivenClassification;
     }
 
+    /**
+     * Calculates the total size of all file nodes matching the given classification(s).
+     *
+     * @param rootNode       the root node of the directory tree structure
+     * @param classification a list of FileClassification values to filter
+     * @return the sum of sizes of all file nodes matching the given classification(s)
+     */
     public static Double getSumOfSizeForByClassification(TreeDirectoryDTO rootNode, List<FileClassification> classification) {
         Double sumOfSizeForGivenClassification;
         sumOfSizeForGivenClassification = DirectoryUtility.getNodesBasedOnGivenClassificationByDFS(rootNode, classification)
@@ -90,6 +106,15 @@ public class DirectoryMain {
         return sumOfSizeForGivenClassification;
     }
 
+    /**
+     * Retrieves all child file nodes under the specified folder that match the given classification(s).
+     *
+     * @param folderName      the name of the folder to search within the directory tree
+     * @param rootNode        the root node of the directory tree structure
+     * @param classifications a list of FileClassification values to filter
+     * @return a formatted string of matching child file nodes sorted by ID,
+     * or an error message if the folder is not found or the name does not refer to a folder
+     */
     public static String getChildFileNodesByFolderName(String folderName, TreeDirectoryDTO rootNode, List<FileClassification> classifications) {
         // First, find the subtree node to the given folder name.
         Optional<TreeDirectoryDTO> folderNode = DirectoryUtility.getAllNodesByBFS(rootNode)
@@ -105,7 +130,6 @@ public class DirectoryMain {
         // Get all child nodes under the folder node with the given classifications.
         return getNodesByClassification(folderNode.get(), classifications);
     }
-
 }
 
 //        2(F)

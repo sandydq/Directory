@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class DirectoryTest {
@@ -24,6 +25,40 @@ public class DirectoryTest {
     public void setUp() {
         directoryOperation = new DirectoryOperationImpl();
         rootNode = createMockTreeStructure();
+    }
+
+    @Test(groups = "1")
+    public void testDirectoryModelAddSize() {
+        DirectoryDTO rootDTO = new DirectoryDTO(1L, "root", null, FileType.FOLDER, null, null, null);
+        rootDTO.addFolderSize(40.0);
+        Assert.assertEquals(rootDTO.getSize(), 40.0);
+    }
+
+    @Test(groups = "1")
+    public void testDirectoryModelAddNullSize() {
+        DirectoryDTO rootDTO = new DirectoryDTO(1L, "root", null, FileType.FOLDER, null, null, null);
+        rootDTO.addFolderSize(null);
+        Assert.assertEquals(rootDTO.getSize(), 0.0);
+    }
+
+    @Test(groups = "1")
+    public void testTreeDirectoryAddChildren() {
+        DirectoryDTO rootDTO = new DirectoryDTO(1L, "root", null, FileType.FOLDER, 490d, null, null);
+        TreeDirectoryDTO root = new TreeDirectoryDTO(rootDTO);
+        DirectoryDTO sf1 = new DirectoryDTO(2L, "secretFile1", 1L, FileType.FILE, 100.0, FileClassification.SECRET, 42L);
+        TreeDirectoryDTO secretFile1 = new TreeDirectoryDTO(sf1);
+        root.addChildren(secretFile1);
+
+        Assert.assertEquals(root.getChildren().size(), 1);
+        Assert.assertEquals(root.getChildren().get(0).getDirectoryDTO().getId(), 2L);
+    }
+
+    @Test(groups = "1")
+    public void testTreeDirectoryAddNullChildren() {
+        DirectoryDTO rootDTO = new DirectoryDTO(1L, "root", null, FileType.FOLDER, 490d, null, null);
+        TreeDirectoryDTO root = new TreeDirectoryDTO(rootDTO);
+
+        Assert.assertThrows(IllegalArgumentException.class, () -> root.addChildren(null));
     }
 
     @Test(groups = "2")
@@ -170,12 +205,6 @@ public class DirectoryTest {
         Assert.assertTrue(result.isEmpty());
     }
 
-    @Test(groups = "3-b")
-    public void testNullRootNodeTraversalDFS() {
-        Integer result = DirectoryUtility.getNodesBasedOnGivenClassificationByDFS(null, null).size();
-        Assert.assertEquals(result, 0);
-    }
-
     @Test(groups = "3-c")
     public void testGetNodesWithSecretClassification() {
         List<FileClassification> secretClassification = List.of(FileClassification.SECRET);
@@ -285,10 +314,28 @@ public class DirectoryTest {
         Assert.assertEquals(result, fileName + " is not a folder, please provide a valid folder name");
     }
 
-    @Test(groups = "3-f")
+    @Test(groups = "others")
+    public void testNullRootNodeTraversalDFS() {
+        Integer result = DirectoryUtility.getNodesBasedOnGivenClassificationByDFS(null, null).size();
+        Assert.assertEquals(result, 0);
+    }
+
+    @Test(groups = "others")
     public void testNullRootNodeTraversalBFS() {
         Integer result = DirectoryUtility.getAllNodesByBFS(null).size();
         Assert.assertEquals(result, 0);
+    }
+
+    @Test(groups = "others")
+    public void testGetArgValueByKey() {
+
+        String csvPathValue = DirectoryUtility.getArgValueByKey(new String[]{"csv.path=test/test.csv", "folder.search=testName"}, "csv.path");
+        String folderNameValue = DirectoryUtility.getArgValueByKey(new String[]{"csv.path=test/test.csv", "folder.search=testName"}, "folder.search");
+
+        Assert.assertNotNull(csvPathValue);
+        Assert.assertNotNull(folderNameValue);
+        Assert.assertEquals(csvPathValue, "test/test.csv");
+        Assert.assertEquals(folderNameValue, "testName");
     }
 
     private static TreeDirectoryDTO createMockTreeStructure() {
@@ -356,17 +403,19 @@ public class DirectoryTest {
     }
 
     public String read() {
-        return "name = root, type = Directory, size = 490.0\n" +
-                " name = secretFile1, type = File, size = 100.0, classification = Secret, checksum = 42\n" +
-                " name = topSecretFile1, type = File, size = 80.0, classification = Top secret, checksum = 42\n" +
-                " name = folder1, type = Directory, size = 310.0\n" +
-                "  name = publicFile1, type = File, size = 10.0, classification = Public, checksum = 42\n" +
-                "  name = secretFile12, type = File, size = 40.0, classification = Secret, checksum = 42\n" +
-                "  name = folder2, type = Directory, size = 260.0\n" +
-                "   name = publicFile2, type = File, size = 60.0, classification = Public, checksum = 42\n" +
-                "   name = topSecretFile2, type = File, size = 50.0, classification = Top secret, checksum = 42\n" +
-                "   name = publicFile3, type = File, size = 70.0, classification = Public, checksum = 42\n" +
-                "   name = publicFile4, type = File, size = 80.0, classification = Public, checksum = 42\n";
+        return """
+                name = root, type = Directory, size = 490.0
+                 name = secretFile1, type = File, size = 100.0, classification = Secret, checksum = 42
+                 name = topSecretFile1, type = File, size = 80.0, classification = Top secret, checksum = 42
+                 name = folder1, type = Directory, size = 310.0
+                  name = publicFile1, type = File, size = 10.0, classification = Public, checksum = 42
+                  name = secretFile12, type = File, size = 40.0, classification = Secret, checksum = 42
+                  name = folder2, type = Directory, size = 260.0
+                   name = publicFile2, type = File, size = 60.0, classification = Public, checksum = 42
+                   name = topSecretFile2, type = File, size = 50.0, classification = Top secret, checksum = 42
+                   name = publicFile3, type = File, size = 70.0, classification = Public, checksum = 42
+                   name = publicFile4, type = File, size = 80.0, classification = Public, checksum = 42
+                """;
     }
 
     public static List<String> getClassificationsFromString(String result) {
