@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class DirectoryOperationImpl implements DirectoryOperationInterface {
@@ -31,7 +32,7 @@ public class DirectoryOperationImpl implements DirectoryOperationInterface {
             String line;
             while ((line = br.readLine()) != null) {
                 // Skip comment lines (starting with #)
-                if (!line.startsWith("#")) {
+                if (!line.startsWith("#") && !line.isEmpty()) {
                     // Split the line by semicolon delimiter
                     String[] values = line.replaceAll(";", "; ").split(CSV_DELIMITER);
                     DirectoryDTO directoryDTO = new DirectoryDTO();
@@ -69,7 +70,7 @@ public class DirectoryOperationImpl implements DirectoryOperationInterface {
                 .toList();
 
         if (rootDirectory.size() != 1) {
-            throw new RuntimeException("More than one root element present in the given CSV file");
+            throw new RuntimeException("More than one or zero root element present in the given CSV file");
         }
         return rootDirectory.get(0);
     }
@@ -89,16 +90,17 @@ public class DirectoryOperationImpl implements DirectoryOperationInterface {
         List<DirectoryDTO> children = source
                 .stream()
                 .filter(dir -> dir.getParentId() != null && dir.getParentId().equals(parentId))
+                .sorted(Comparator.comparing(DirectoryDTO :: getName))
                 .toList();
 
         for (DirectoryDTO child : children) {
-            TreeDirectoryDTO tree = new TreeDirectoryDTO(child);
-            folderNode.addChildren(tree);
+            TreeDirectoryDTO treeNode = new TreeDirectoryDTO(child);
+            folderNode.addChildren(treeNode);
             // Do recursion for child nodes only if it's a folder.
             if (child.getType().equals(FileType.FOLDER)) {
-                createTreeStructure(tree, source);
+                createTreeStructure(treeNode, source);
                 // After processing the child folder, add its size to the parent folder's size
-                folderNode.getDirectoryDTO().addFolderSize(tree.getDirectoryDTO().getSize());
+                folderNode.getDirectoryDTO().addFolderSize(treeNode.getDirectoryDTO().getSize());
             } else {
                 // If it's a file, add its size to the parent folder's size
                 folderNode.getDirectoryDTO().addFolderSize(child.getSize());

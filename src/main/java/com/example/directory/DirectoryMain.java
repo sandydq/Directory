@@ -64,7 +64,7 @@ public class DirectoryMain {
             String folderName = folderToSearchFromArg != null && !folderToSearchFromArg.isBlank() ? folderToSearchFromArg : CSV_DEFAULT_FOLDER_NAME_TO_SEARCH;
             DirectoryUtility.printSeparator("3f) Printing all file nodes under " + folderName + " with classification other than Public");
             String fileNodesUnderFolder11ExceptPublic = getChildFileNodesByFolderName(folderName, rootNode, nonPublicClassifications);
-            System.out.println(fileNodesUnderFolder11ExceptPublic);
+            System.out.println(DirectoryUtility.isValidValue(fileNodesUnderFolder11ExceptPublic) ? fileNodesUnderFolder11ExceptPublic : "No file nodes with classification other than Public or no file found under " + folderName);
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         } catch (Exception e) {

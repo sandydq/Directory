@@ -8,6 +8,7 @@ public class DirectoryDTO {
     private Long parentId;
     private String name;
     private FileType type;
+    //Size can have decimal as well, but printing as long value.
     private Double size;
     private FileClassification classification;
     private Long checkSum;
@@ -92,11 +93,11 @@ public class DirectoryDTO {
         if (this.type.equals(FileType.FOLDER)) {
             return "name = " + name +
                     ", type = " + type.getName() +
-                    ", size = " + size;
+                    ", size = " + size.longValue();
         } else {
             return "name = " + name +
                     ", type = " + type.getName() +
-                    ", size = " + size +
+                    ", size = " + size.longValue() +
                     ", classification = " + (classification == null ? null : classification.getName()) +
                     ", checksum = " + checkSum;
         }

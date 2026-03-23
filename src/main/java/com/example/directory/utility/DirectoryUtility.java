@@ -56,7 +56,8 @@ public class DirectoryUtility {
      */
     public static String getDirectoryStructureByDFS(TreeDirectoryDTO node, Integer step) {
         if (node == null) {
-            return "Provided tree node is null, returning empty string";
+            System.out.println("Provided tree node is null, returning empty string");
+            return "";
         }
         String result = indentation.apply(step) + node.getDirectoryDTO() + "\n";
 
