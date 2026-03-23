@@ -90,6 +90,14 @@ mvn jacoco:report
 # View coverage report
 target/site/jacoco/index.html
 ```
+## Troubleshooting
+
+```
+If this project opened in IntelliJ IDEA and you are facing issues with running the application, Maybe below steps can help you to resolve the issue:
+    1. Set the SDK to 17 in the project structure settings.
+    2. Set the Language level to 17 in the project structure settings.
+```
+
 ---
 
 
